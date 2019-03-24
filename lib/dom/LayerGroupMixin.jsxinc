@@ -1,0 +1,122 @@
+﻿#include "../common.jsxinc"
+#include "LayerUtils.jsxinc"
+
+
+var LayerGroupMixin = function () {};
+
+
+LayerGroupMixin.prototype.layer = function (name) { return this._createLayerObj(this.dom.layers[name]); };
+LayerGroupMixin.prototype.artLayer = function (name) { return this._createArtLayerObj(this.dom.artLayers[name]); };
+LayerGroupMixin.prototype.layerSet = function (name) { return this._createLayerSetObj(this.dom.layerSets[name]); };
+
+LayerGroupMixin.prototype.findLayer = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath, this.dom);
+    return dom != null ? this._createLayerObj(dom) : null;
+};
+
+LayerGroupMixin.prototype.findArtLayer = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath, this.dom);
+    return dom != null && dom.typename == "ArtLayer" ? this._createArtLayerObj(dom) : null;
+};
+
+LayerGroupMixin.prototype.findLayerSet = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath, this.dom);
+    return dom != null && dom.typename == "LayerSet" ? this._createLayerSetObj(dom) : null;
+};
+
+LayerGroupMixin.prototype.layers = function (predicate) {
+    var result = [];
+    for (var i = 0; i < this.dom.layers.length; ++i) {
+        var layer = this._createLayerObj(this.dom.layers[i]);
+        if (isUndefined(predicate) || predicate(layer)) {
+            result.push(layer);
+        }
+    }
+    return result;
+};
+
+LayerGroupMixin.prototype.artLayers = function (predicate) {
+    var result = [];
+    for (var i = 0; i < this.dom.artLayers.length; ++i) {
+        var layer = this._createArtLayerObj(this.dom.artLayers[i]);
+        if (isUndefined(predicate) || predicate(layer)) {
+            result.push(layer);
+        }
+    }
+    return result;
+};
+
+LayerGroupMixin.prototype.layerSets = function (predicate) {
+    var result = [];
+    for (var i = 0; i < this.dom.layerSets.length; ++i) {
+        var layer = this._createArtLayerObj(this.dom.layerSets[i]);
+        if (isUndefined(predicate) || predicate(layer)) {
+            result.push(layer);
+        }
+    }
+    return result;
+};
+
+LayerGroupMixin.prototype.addArtLayer = function (name) {
+    var newLayerDom = this.dom.artLayers.add();
+    if (!isUndefined(name)) {
+        newLayerDom.name = name;
+    }
+    return new CArtLayer(newLayerDom);
+};
+
+LayerGroupMixin.prototype.addLayerSet = function (/* name, ... children */) {
+    var newLayerDom = this.dom.layerSets.add();
+    if (arguments.length > 0) {
+        newLayerDom.name = arguments[0];
+    }
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; ++i) {
+            var child = arguments[1];
+            child.dom.move(newLayerDom, ElementPlacement.PLACEATBEGINNING);
+        }
+    }
+    return new CLayerSet(newLayerDom);
+};
+
+LayerGroupMixin.prototype.forEachLayers = function (callback, predicate, selector) {
+    var layers = [];
+    for (var i = 0; i < this.dom.layers.length; ++i) {
+        layers.push(this._createLayerObj(this.dom.layers[i]));
+    }
+
+    while (layers.length > 0) {
+        var layer = layers.pop();
+        if (isUndefined(predicate) || predicate(layer)) {
+            callback(layer);
+        }
+
+		if (layer.isLayerSet()) {
+			for (var i = 0; i < layer.dom.layers.length; ++i) {
+                var dom = layer.dom.layers[i];
+                var item = !isUndefined(selector) ? selector(dom) : this._createLayerObj(dom);
+                layers.push(item);
+			}
+		}
+    }
+};
+
+LayerGroupMixin.prototype.forEachArtLayers = function (callback, predicate) {
+    var newPredicate = null;
+    if (isUndefined(predicate)) {
+        newPredicate = function (x) { return x.isArtLayer(); };
+    } else {
+        newPredicate = function (x) { return x.isArtLayer() && predicate(x); };
+    }
+    this.forEachLayers(callback, newPredicate, function (x) { return this._createArtLayerObj(x); });
+};
+
+LayerGroupMixin.prototype.forEachLayerSets = function (callback, predicate) {
+    var newPredicate = null;
+    if (isUndefined(predicate)) {
+        newPredicate = function (x) { return x.isLayerSet(); };
+    } else {
+        newPredicate = function (x) { return x.isLayerSet() && predicate(x); };
+    }
+    this.forEachLayers(callback, newPredicate, function (x) { return this._createLayerSetObj(x); });
+};

@@ -1,0 +1,127 @@
+﻿#include "../common.jsxinc"
+#include "../ext/Array.jsxinc"
+#include "DomObject.jsxinc"
+#include "LayerGroupMixin.jsxinc"
+#include "CLayer.jsxinc"
+#include "CArtLayer.jsxinc"
+#include "CLayerSet.jsxinc"
+
+
+var CDocument = function (dom) {
+    this.dom = dom;
+};
+inherits(CDocument, DomObject);
+ObjectAssign(CDocument.prototype, LayerGroupMixin.prototype);
+
+
+CDocument.prototype._createLayerObj = function (dom) { return new CLayer(dom); };
+CDocument.prototype._createArtLayerObj = function (dom) { return new CArtLayer(dom); };
+CDocument.prototype._createLayerSetObj = function (dom) { return new CLayerSet(dom); };
+
+CDocument.prototype.filePath = function () { return this.dom.path.fullName + "/" + this.dom.name; };
+CDocument.prototype.file = function () { return new File(this.filePath()); };
+CDocument.prototype.selection = function () { return this.dom.selection; };
+CDocument.prototype.resolution = function () { return this.dom.resolution; };
+CDocument.prototype.size = function () { return [this.dom.width, this.dom.height]; };
+CDocument.prototype.bounds = function () {
+    var unit = this.dom.width.type; // current ruler unit as string
+    return [new UnitValue(0, unit), new UnitValue(0, unit), this.dom.width, this.dom.height];
+};
+
+CDocument.current = function () {
+    var doc = app.activeDocument;
+    return !isUndefined(doc) ? new CDocument(doc) : null;
+};
+
+CDocument.all = function () {
+    var result = [];
+    for (var i = 0; i < app.documents.length; ++i) {
+        var doc = app.documents[i];
+        result.push(new CDocument(doc));
+    }
+    return result;
+};
+
+CDocument.open = function (file) {
+    var doc = app.open(file);
+    return new CDocument(doc);
+};
+
+
+CDocument.prototype.close = function () {
+    this.dom.close(SaveOptions.DONOTSAVECHANGES);
+};
+
+CDocument.prototype.save = function (file) {
+    if (isUndefined(file)) {
+        this.dom.save();
+    } else {
+        if (!file.parent.exists) {
+            file.parent.create();
+        }
+        this.dom.saveAs(file);
+    }
+};
+
+CDocument.prototype.saveForWeb = function (file, options) {
+    if (isUndefined(file)) {
+        file = this.file();
+    }
+    if (!file.parent.exists) {
+        file.parent.create();
+    }
+
+    if (isUndefined(options)) {
+        options = new ExportOptionsSaveForWeb();
+        options.format = SaveDocumentType.PNG;
+        options.PNG8 = false;
+    }
+
+    this.dom.exportDocument(file, ExportType.SAVEFORWEB, options);
+};
+
+CDocument.prototype.setCurrent = function () {
+    try {
+        var current = app.activeDocument;
+        app.activeDocument = this.dom;
+        return new CDocument(current);
+    } catch (e) {
+        return null; // no documents are opened
+    }
+};
+
+CDocument.prototype.duplicate = function (name) {
+    name = isUndefined(name) ? this.dom.name : name;
+    var newDocDom = this.dom.duplicate(name);
+    return new CDocument(newDocDom);
+};
+
+CDocument.prototype.flatten = function () {
+    this.dom.flatten();
+};
+
+CDocument.prototype.crop = function (bounds, angle, width, height) {
+    angle = isUndefined(angle) ? 0 : angle;
+    width = isUndefined(width) || width <= 0 ? bounds[2] : width;
+    height = isUndefined(height) || height <= 0 ? bounds[3] : height;
+    this.dom.crop(bounds, angle, width, height);
+};
+
+CDocument.prototype.clearLayerSelection = function () {
+    var current = app.activeDocument;
+    app.activeDocument = this.dom;
+
+    var desc01 = new ActionDescriptor();
+    var ref01 = new ActionReference();
+    ref01.putEnumerated( charIDToTypeID('Lyr '), charIDToTypeID('Ordn'), charIDToTypeID('Trgt') );
+    desc01.putReference( charIDToTypeID('null'), ref01 );
+    executeAction( stringIDToTypeID('selectNoLayers'), desc01, DialogModes.NO );
+
+    app.acitveDocument = current;
+};
+
+CDocument.prototype.clearDocumentAncestors = function () {
+    var data = new XML(doc.dom.xmpMetadata.rawData);
+    data.xpath("//photoshop:DocumentAncestors").replace("rdf:Bag", new XML());
+    doc.dom.xmpMetadata.rawData = data.toString();
+};

@@ -1,0 +1,33 @@
+﻿#include "../common.jsxinc"
+#include "../ext/Array.jsxinc"
+#include "LayerGroupMixin.jsxinc"
+#include "CLayer.jsxinc"
+#include "CArtLayer.jsxinc"
+
+
+var CLayerSet = function (dom) {
+    this.dom = dom;
+}
+inherits(CLayerSet, CLayer);
+ObjectAssign(CLayerSet.prototype, LayerGroupMixin.prototype);
+
+
+CLayerSet.current = function () {
+    var current = app.activeDocument.activeLayer;
+    return current != null ? new CLayerSet(current) : null;
+};
+
+CLayerSet.fromIndex = function (index) {
+    var dom = LayerUtils.getDomObjectFromIndex(index);
+    return dom != null ? new CLayerSet(dom) : null;
+};
+
+CLayerSet.fromPath = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath);
+    return dom != null ? new CLayerSet(dom) : null;
+};
+
+
+CLayerSet.prototype._createLayerObj = function (dom) { return new CLayer(dom); };
+CLayerSet.prototype._createArtLayerObj = function (dom) { return new CArtLayer(dom); };
+CLayerSet.prototype._createLayerSetObj = function (dom) { return new CLayerSet(dom); };

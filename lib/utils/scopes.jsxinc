@@ -1,0 +1,37 @@
+﻿#include "../dom/CDocument.jsxinc"
+
+
+var scopes = {};
+
+
+scopes.setCurrent = function (obj, callback) {
+    var current = obj.setCurrent();
+    var result = callback(obj);
+    if (current != null) {
+        current.setCurrent();
+    }
+	return result;
+};
+
+scopes.unlock = function (obj, callback) {
+    var lockState = obj.unlock();
+    var result = callback(obj);
+    obj.lock(lockState);
+    return result;
+};
+
+scopes.openSmartObject = function (layer, callback) {
+    layer.openSmartObject();
+    var smartObjDoc = CDocument.current();
+    var result = callback(smartObjDoc);
+    smartObjDoc.close();
+	return result;
+};
+
+scopes.setRulerUnits = function (unit, callback) {
+    var current = app.preferences.rulerUnits;
+    app.preferences.rulerUnits = unit;
+    var result = callback();
+    app.preferences.rulerUnits = current;
+	return result;
+};

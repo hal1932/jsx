@@ -1,0 +1,8 @@
+﻿#include "../common.jsxinc"
+
+var DomObject = function (dom) {
+    this.dom = dom;
+};
+
+DomObject.prototype.name = function () { return this.dom.name; };
+DomObject.prototype.typename = function () { return this.dom.typename; };

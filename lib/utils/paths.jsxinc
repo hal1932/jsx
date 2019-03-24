@@ -1,0 +1,20 @@
+﻿#include "../ext/String.jsxinc"
+
+paths = {};
+
+paths.sep = $.os.indexOf("Windows") >= 0 ? "\\" : "/";
+
+paths.changeExtension = function (filePath, ext) {
+    var i = filePath.lastIndexOf(".");
+    return i >= 0 ? filePath.substring(0, i) + ext : filePath + ext;
+};
+
+paths.combine = function (separator) {
+	separator = isUndefined(separator) ? paths.sep : separator;
+    var result = arguments[0];
+    for (var i = 1; i < arguments.length; ++i) {
+        var item = arguments[i];
+        result += result.endsWith("/") || result.endsWith("\\") ? item : separator + item;
+    }
+    return result;
+};

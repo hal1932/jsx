@@ -1,0 +1,41 @@
+var LockState = function (layer) {
+    if (isUndefined(layer)) {
+        return;
+    }
+
+    var dom = layer.dom;
+    this.all = dom.allLocked;
+    if (dom.typename == "ArtLayer") {
+        this.pixels = dom.pixelsLocked;
+        this.position = dom.positionLocked;
+        this.transparentPixels = dom.transparentPixelsLocked;
+    }
+};
+
+LockState.none = function () {
+    var state = new LockState();
+    state.all = false;
+    state.pixels = false;
+    state.position = false;
+    state.transparentPixels = false;
+    return state;
+};
+
+LockState.full = function () {
+    var state = new LockState();
+    state.all = true;
+    state.pixels = true;
+    state.position = true;
+    state.transparentPixels = true;
+    return state;
+};
+
+LockState.prototype.applyTo = function (layer) {
+    var dom = layer.dom;
+    dom.allLocked = this.all;
+    if (dom.typename == "ArtLayer") {
+        dom.pixelsLocked = this.pixels;
+        dom.positionLocked = this.position;
+        dom.transparentPixelsLocked = this.transparentPixels;
+    }
+};

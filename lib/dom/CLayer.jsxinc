@@ -1,0 +1,84 @@
+﻿#include "../common.jsxinc"
+#include "DomObject.jsxinc"
+#include "LayerUtils.jsxinc"
+#include "LockState.jsxinc"
+
+var CLayer = function (dom) { 
+    this.dom = dom;
+};
+inherits(CLayer, DomObject);
+
+CLayer.current = function () {
+    var current = app.activeDocument.activeLayer;
+    return current != null ? new CLayer(current) : null;
+};
+
+CLayer.fromIndex = function (index) {
+    var dom = LayerUtils.getDomObjectFromIndex(index);
+    return dom != null ? new CLayer(dom) : null;
+};
+
+CLayer.fromPath = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath);
+    return dom != null ? new CLayer(dom) : null;
+};
+
+CLayer.prototype.kind = function () { return this.dom.kind; };
+CLayer.prototype.bounds = function () { return this.dom.bounds; };
+CLayer.prototype.isArtLayer = function () { return this.typename() == "ArtLayer"; };
+CLayer.prototype.isLayerSet = function () { return this.typename() == "LayerSet"; };
+CLayer.prototype.isVisible = function () { return this.dom.visible; };
+CLayer.prototype.lockState = function () { return new LockState(this); };
+
+CLayer.prototype.getIndex = function () {
+    var current = app.activeDocument.activeLayer;
+    app.activeDocument.activeLayer = this.dom;
+
+    var ref = new ActionReference();
+    ref.putProperty(charIDToTypeID("Prpr"), charIDToTypeID("ItmI"));
+    ref.putEnumerated(charIDToTypeID("Lyr "), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+    var index = executeActionGet(ref).getInteger(charIDToTypeID("ItmI")) - 1;
+
+    app.activeDocument.activeLayer = current;
+    return index;
+};
+
+CLayer.prototype.getPath = function () {
+    var path = this.name();
+    var parent = this.dom.parent;
+    while (parent != null && parent.typename != "Document") {
+        path = parent.name + "/" + path;
+        parent = parent.parent;
+    }
+    return path;
+};
+
+CLayer.prototype.setCurrent = function () {
+    var current = app.activeDocument.activeLayer;
+    app.activeDocument.activeLayer = this.dom;
+    return current != null ? new CLayer(current) : null;
+};
+
+CLayer.prototype.setVisible = function (value) {
+    this.dom.visible = value;
+};
+
+CLayer.prototype.rename = function (value) {
+    this.dom.name = value;
+};
+
+CLayer.prototype.unlock = function () {
+    var currentLock = this.lockState();
+    this.lock(LockState.none());
+    return currentLock;
+};
+
+CLayer.prototype.lock = function (lockState) {
+    lockState = isUndefined(lockState) ? LockState.full() : lockState;
+    lockState.applyTo(this);
+};
+
+CLayer.prototype.remove = function () {
+    this.dom.remove();
+    this.dom = null;
+};

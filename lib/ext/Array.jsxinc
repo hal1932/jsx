@@ -1,0 +1,46 @@
+Array.prototype.map = function (selector) {
+    var result = [];
+    for (var i = 0; i < this.length; ++i) {
+        var item = this[i];
+        result.push(selector(item));
+    }
+    return result;
+};
+
+Array.prototype.filter = function (predicate) {
+    var result = [];
+    for (var i = 0; i < this.length; ++i) {
+        var item = this[i];
+        if (predicate(item)) {
+            result.push(item);
+        }
+    }
+    return result;
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+Array.prototype.includes = function (searchElement, fromIndex) {
+    return this.indexOf(searchElement, fromIndex) >= 0;
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+Array.prototype.indexOf = function (searchElement, fromIndex) {
+    fromIndex = !isUndefined(fromIndex) ? fromIndex : 0;
+    for (var i = fromIndex; i < this.length; ++i) {
+        if (this[i] == searchElement) {
+            return i;
+        }
+    }
+    return -1;
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+Array.prototype.lastIndexOf = function (searchElement, fromIndex) {
+    fromIndex = !isUndefined(fromIndex) ? fromIndex : this.length - 1;
+    for (var i = fromIndex; i >= 0; --i) {
+        if (this[i] == searchElement) {
+            return this.length - i;
+        }
+    }
+    return -1;
+};

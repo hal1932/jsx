@@ -1,0 +1,70 @@
+var console = {};
+
+
+console.log = function (/* ... */) {
+	switch (arguments.length) {
+		case 0:
+			return;
+		
+		case 1:
+			$.writeln(console.format(arguments[0]));
+			return;
+		
+		default:
+            var str = "";
+			for (var i = 0; i < arguments.length; ++i) {
+				str += console.format(arguments[i]) + ", ";
+			}
+            $.writeln(str.substr(0, str.length - 2));
+			return;
+	}
+};
+
+console.format = function (obj) {
+	if (obj.hasOwnProperty("typename")) {
+		return obj.toString(); // ExtendScript DOM Object
+	}
+
+	if (obj instanceof Array) {
+        if (obj.length == 0) {
+            return "[ ]";
+        }
+
+		var str = "[ ";
+		for (var i = 0; i < obj.length; ++i) {
+			str += console.format(obj[i]) + ", ";
+		}
+		return str.substr(0, str.length - 2) + " ]";
+	}
+
+	if (obj instanceof Date) {
+		return obj.getFullYear() + "/" + obj.getMonth() + "/" + obj.getDate() + " " + obj.toTimeString();
+	}
+
+	var type = typeof obj;
+	if (type == "boolean" || type == "number" || type == "string") {
+		return obj.toString();
+	}
+
+	var props = [];
+	for (var key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			try {
+				props.push({"key": key, "value": obj[key]});
+			} catch (e) {}
+		}
+	}
+
+	if (props.length > 0) {
+		props.sort(function (a, b) { return a.key > b.key; });
+		
+		var str = "{ ";
+		for (var j = 0; j < props.length; ++j) {
+			var prop = props[j];
+			str += prop.key + ": " + console.format(prop.value) + ", ";
+		}
+		return str.substr(0, str.length - 2) + " }";
+	}
+
+	return "{ }";
+}

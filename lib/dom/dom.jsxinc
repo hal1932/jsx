@@ -1,0 +1,8 @@
+#include "common.jsxinc"
+#include "CDocument.jsxinc"
+#include "CLayer.jsxinc"
+#include "CArtLayer.jsxinc"
+#include "CLayerSet.jsxinc"
+#include "DomObject.jsxinc"
+#include "LayerUtils.jsxinc"
+#include "LockState.jsxinc"

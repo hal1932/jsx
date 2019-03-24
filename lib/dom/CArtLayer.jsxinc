@@ -1,0 +1,35 @@
+#include "../common.jsxinc"
+#include "CLayer.jsxinc"
+
+
+var CArtLayer = function (dom) {
+    this.dom = dom;
+}
+inherits(CArtLayer, CLayer);
+ObjectAssign(CArtLayer.prototype, LayerGroupMixin.prototype);
+
+
+CArtLayer.current = function () {
+    var current = app.activeDocument.activeLayer;
+    return current != null ? new CArtLayer(current) : null;
+};
+
+CArtLayer.fromIndex = function (index) {
+    var dom = LayerUtils.getDomObjectFromIndex(index);
+    return dom != null ? new CArtLayer(dom) : null;
+};
+
+CArtLayer.fromPath = function (layerPath) {
+    var dom = LayerUtils.getDomObjectFromPath(layerPath);
+    return dom != null ? new CArtLayer(dom) : null;
+};
+
+
+CArtLayer.prototype.isSmartObject = function () { return this.kind() == LayerKind.SMARTOBJECT; };
+CArtLayer.prototype.isBackground = function () { return this.dom.isBackgroundLayer; };
+
+CArtLayer.prototype.openSmartObject = function () {
+    this.setCurrent();
+    var idplacedLayerEditContents = stringIDToTypeID( "placedLayerEditContents" );
+    executeAction( idplacedLayerEditContents, new ActionDescriptor(), DialogModes.NO );
+};

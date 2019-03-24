@@ -1,0 +1,27 @@
+﻿inherits = function (derivedCtor, baseCtor) {
+	var tmpCtor = function () {};
+	tmpCtor.prototype = baseCtor.prototype;
+	derivedCtor.prototype = new tmpCtor();
+	derivedCtor.prototype.constructor = derivedCtor;
+};
+
+isUndefined = function (obj) {
+    return obj === undefined;
+}
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+// Object.prototypeは変更できない
+//Object.prorotype.assign = function (/* target, ...sources */) {
+ObjectAssign = function (/* target, ...sources */) {
+    if (arguments.length < 2) {
+        return;
+    }
+    var target = arguments[0];
+    for (var i = 1; i < arguments.length; ++i) {
+        var source = arguments[i];
+        for (var key in source) {
+            target[key] = source[key];
+        }
+    }
+    return target;
+};

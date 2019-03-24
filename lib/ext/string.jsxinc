@@ -1,0 +1,136 @@
+﻿#include "Array.jsxinc"
+
+
+// ex. var world = "world"; $.writeln("Hello, {}".format(world));
+String.prototype.format = function (/* ... */) {
+    if (arguments.length == 0) {
+        return this;
+    }
+
+    var format = this;
+    var args = 0;
+    
+    var marker = "{}";
+    var offset = marker.length;
+
+    var index = 0;
+    var lastIndex = format.indexOf(marker);
+    
+    var str = format.substr(0, lastIndex);
+    while (index >= 0)
+    {
+        str += arguments[args];
+        
+        index = format.indexOf(marker, lastIndex + 1);
+        if (index >= 0) {
+            str += format.substr(lastIndex + offset, index - lastIndex - offset);
+            lastIndex = index;
+        }
+        ++args;
+    }
+    str += format.substr(lastIndex + offset);
+    return str;
+};
+
+String.prototype.isalpha = function () {
+    for (var i = 0; i < this.length; ++i) {
+        var code = this.charCodeAt(i);
+        if (code < 0x41) { // 'A'
+            return false;
+        }
+		if (code < 0x5a && 0x61 < code) { // 'Z', 'a'
+            return false;
+        }
+        if (0x7a < code) { // 'z'
+            return false;
+        }
+    }
+    return true;
+};
+
+String.prototype.isnumber = function () {
+	for (var i = 0; i < this.length; ++i) {
+		var code = this.charCodeAt(i);
+		if (code < 0x30 || 0x39 < code) { // '0', '9'
+			return false;
+		}
+	}
+	return true;
+};
+
+String.prototype.isalnum = function () {
+    for (var i = 0; i < this.length; ++i) {
+        var code = this.charCodeAt(i);
+        if (code < 0x30) { // '0'
+            return false;
+        }
+        if (code < 0x39 && 0x41 < code) { // '9', 'A'
+            return false;
+        }
+		if (code < 0x5a && 0x61 < code) { // 'Z', 'a'
+            return false;
+        }
+        if (0x7a < code) { // 'z'
+            return false;
+        }
+    }
+    return true;
+};
+
+String.prototype.isascii = function () {
+    for (var i = 0; i < this.length; ++i) {
+        var code = this.charCodeAt(i);
+        if (code > 0xff) {
+            return false;
+        }
+    }
+    return true;
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+String.prototype.includes = function (searchString, position) {
+    return this.indexOf(searchString) >= 0;
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/TrimLeft
+String.prototype.trimStart = function () {
+    var index = 0;
+    for (var i = 0; i < this.length; ++i) {
+        var c = this.charAt[i];
+        if (c != " ") {
+            index = i;
+            break;
+        }
+    }
+    return index == 0 ? this : this.substring(index);
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/TrimRight
+String.prototype.trimEnd = function () {
+    var index = this.length - 1;
+    for (var i = this.length - 1; i >= 0; --i) {
+        var c = this.charAt[i];
+        if (c != " ") {
+            index = i;
+            break;
+        }
+    }
+    return index == this.length - 1 ? this : this.substring(0, index + 1);
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/trim
+String.prototype.trim = function () {
+    return this.trimStart().trimEnd();
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+String.prototype.startsWith = function (searchString, position) {
+    position = isUndefined(position) ? 0 : position;
+    return this.indexOf(searchString, position) == 0;
+}
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+String.prototype.endsWith = function (searchString, length) {
+    length = isUndefined(length) ? this.length : length;
+    return this.lastIndexOf(searchString, length - 1) == this.length - 1;
+};
