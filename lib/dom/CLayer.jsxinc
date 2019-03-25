@@ -3,10 +3,12 @@
 #include "LayerUtils.jsxinc"
 #include "LockState.jsxinc"
 
+
 var CLayer = function (dom) { 
     this.dom = dom;
 };
 inherits(CLayer, DomObject);
+
 
 CLayer.current = function () {
     var current = app.activeDocument.activeLayer;
@@ -22,6 +24,7 @@ CLayer.fromPath = function (layerPath) {
     var dom = LayerUtils.getDomObjectFromPath(layerPath);
     return dom != null ? new CLayer(dom) : null;
 };
+
 
 CLayer.prototype.kind = function () { return this.dom.kind; };
 CLayer.prototype.bounds = function () { return this.dom.bounds; };
