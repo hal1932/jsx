@@ -4,11 +4,13 @@ var LockState = function (layer) {
     }
 
     var dom = layer.dom;
-    this.all = dom.allLocked;
-    if (dom.typename == "ArtLayer") {
-        this.pixels = dom.pixelsLocked;
-        this.position = dom.positionLocked;
-        this.transparentPixels = dom.transparentPixelsLocked;
+    if (dom.kind != LayerKind.TEXT) {
+        this.all = dom.allLocked;
+        if (dom.typename == "ArtLayer") {
+            this.pixels = dom.pixelsLocked;
+            this.position = dom.positionLocked;
+            this.transparentPixels = dom.transparentPixelsLocked;
+        }
     }
 };
 
@@ -32,10 +34,12 @@ LockState.full = function () {
 
 LockState.prototype.applyTo = function (layer) {
     var dom = layer.dom;
-    dom.allLocked = this.all;
-    if (dom.typename == "ArtLayer") {
-        dom.pixelsLocked = this.pixels;
-        dom.positionLocked = this.position;
-        dom.transparentPixelsLocked = this.transparentPixels;
+    if (dom.kind != LayerKind.TEXT) {
+        dom.allLocked = this.all;
+        if (dom.typename == "ArtLayer") {
+            dom.pixelsLocked = this.pixels;
+            dom.positionLocked = this.position;
+            dom.transparentPixelsLocked = this.transparentPixels;
+        }
     }
 };
