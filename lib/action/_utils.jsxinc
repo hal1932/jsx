@@ -1,0 +1,32 @@
+#include "../externals/xtools/xlib/PSConstants.jsxinc"
+
+
+_utils = {};
+
+
+_utils.id2char = function (id, map) {
+    if (isNaN(Number(id))){
+        return "";
+    }
+    var v;
+
+    var lvl = $.level;
+    $.level = 0;
+    try {
+    if (!v) {
+        try { v = PSConstants.reverseNameLookup(id, map); } catch (e) {}
+    }
+    if (!v) {
+        try { v = PSConstants.reverseSymLookup(id); } catch (e) {}
+    }
+    if (!v) {
+        try { v = app.typeIDToCharID(id); } catch (e) {}
+    }
+    if (!v) {
+        try { v = app.typeIDToStringID(id); } catch (e) {}
+    }
+    } catch (e) {
+    }
+    $.level = lvl;
+    return v ? v : s.toString();
+};

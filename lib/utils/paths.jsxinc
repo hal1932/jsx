@@ -1,4 +1,4 @@
-﻿#include "../ext/String.jsxinc"
+﻿#include "../extensions/String.jsxinc"
 
 paths = {};
 

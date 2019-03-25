@@ -1,0 +1,39 @@
+﻿#include "_utils.jsxinc"
+#include "DescriptorProperty.jsxinc"
+
+var DescriptorProxy = function (desc) {
+    this.desc = desc;
+};
+
+
+DescriptorProxy.prototype.hasKey = function (key) { return this.desc.hasKey(stringIDToTypeID(key)); };
+
+DescriptorProxy.prototype.getData = function (key) { return this.desc.getData(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getBoolean = function (key) { return this.desc.getBoolean(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getClass = function (key) { return this.desc.getClass(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getDouble = function (key) { return this.desc.getDouble(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getEnumerationType = function (key) { return this.desc.getEnumerationType(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getEnumerationValue = function (key) { return this.desc.getEnumerationValue(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getInteger = function (key) { return this.desc.getInteger(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getList = function (key) { return this.desc.getList(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getObjectType = function (key) { return this.desc.getObjectType(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getObjectValue = function (key) { return this.desc.getObjectValue(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getData = function (key) { return this.desc.getData(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getReferene = function (key) { return this.desc.getReferene(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getString = function (key) { return this.desc.getString(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getUnitDoubleType = function (key) { return this.desc.getUnitDoubleType(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getUnitDoubleType = function (key) { return this.desc.getUnitDoubleType(stringIDToTypeID(key)); };
+
+DescriptorProxy.prototype.properties = function () {
+    var props = {};
+    for (var i = 0; i < this.desc.count; ++i) {
+        var keyIndex = this.desc.getKey(i);
+        var type = this.desc.getType(keyIndex);
+
+        var key = _utils.id2char(keyIndex);
+        key = key[0].toLowerCase() + key.substr(1);
+
+        props[key] = new DescriptorProperty(this.desc, keyIndex, type);
+    }
+    return props;
+};

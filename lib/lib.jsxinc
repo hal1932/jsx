@@ -3,3 +3,4 @@
 #include "dom/dom.jsxinc"
 #include "extensions/extensions.jsxinc"
 #include "utils/utils.jsxinc"
+#include "action/action.jsxinc"

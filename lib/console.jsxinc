@@ -1,4 +1,4 @@
-var console = {};
+﻿var console = {};
 
 
 console.log = function (/* ... */) {
@@ -21,6 +21,13 @@ console.log = function (/* ... */) {
 };
 
 console.format = function (obj) {
+	if (obj == null) {
+		return "(null)";
+	}
+	if (obj == undefined) {
+		return "(undefined)";
+	}
+
 	if (obj.hasOwnProperty("typename")) {
 		return obj.toString(); // ExtendScript DOM Object
 	}

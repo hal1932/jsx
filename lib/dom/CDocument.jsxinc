@@ -1,5 +1,5 @@
 ﻿#include "../common.jsxinc"
-#include "../ext/Array.jsxinc"
+#include "../extensions/Array.jsxinc"
 #include "DomObject.jsxinc"
 #include "LayerGroupMixin.jsxinc"
 #include "CLayer.jsxinc"

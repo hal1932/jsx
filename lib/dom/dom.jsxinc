@@ -6,3 +6,4 @@
 #include "DomObject.jsxinc"
 #include "LayerUtils.jsxinc"
 #include "LockState.jsxinc"
+#include "SmartObjectInfo.jsxinc"

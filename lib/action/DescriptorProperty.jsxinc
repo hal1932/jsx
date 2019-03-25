@@ -1,0 +1,48 @@
+﻿#include "_utils.jsxinc"
+
+
+var DescriptorProperty = function (desc, keyIndex, type) {
+    this.keyIndex = keyIndex;
+    this.type = type;
+    this.desc = desc;
+    $.writeln(type, desc);
+};
+
+
+var DescriptorClass = function (index) {
+    this.index = index;
+    this.value = _utils.id2char(index);
+};
+
+var DescriptorEnumValue = function (typeIndex, valueIndex) {
+    this.typeIndex = typeIndex;
+	this.value = _utils.id2char(valueIndex);
+};
+
+var DescriptorObject = function (typeIndex, valueDesc) {
+    this.typeIndex = typeIndex;
+    this.value = valueDesc;
+};
+
+var DescriptorUnitDouble = function (typeIndex, value) {
+    this.typeIndex = typeIndex;
+    this.value = value;
+};
+
+
+DescriptorProperty.prototype.get = function () {
+    if (this.type == DescValueType.ALIASTYPE) return this.desc.getData(this.keyIndex);
+    if (this.type == DescValueType.BOOLEANTYPE) return this.desc.getBoolean(this.keyIndex);
+    if (this.type == DescValueType.CLASSTYPE) return new DescriptorClass(this.desc.getClass(this.keyIndex));
+    if (this.type == DescValueType.DOUBLETYPE) return this.desc.getDouble(this.keyIndex);
+    if (this.type == DescValueType.ENUMERATEDTYPE) return new DescriptorEnumValue(this.desc.getEnumerationType(this.keyIndex), this.desc.getEnumerationValue(this.keyIndex))
+    if (this.type == DescValueType.INTEGERTYPE) return this.desc.getInteger(this.keyIndex);
+    // if (this.type == DescValueType.LARGEINTEGERTYPE) return this.desc.getLargeInteger(this.keyIndex);
+    if (this.type == DescValueType.LISTTYPE) return this.desc.getList(this.keyIndex);
+    if (this.type == DescValueType.OBJECTTYPE) return new DescriptorObject(this.getObjectType(this.keyIndex), this.getObjectValue(this.keyIndex));
+    if (this.type == DescValueType.RAWTYPE) return this.desc.getData(this.keyIndex);
+    if (this.type == DescValueType.REFERENCETYPE) return this.desc.getReferene(this.keyIndex);
+    if (this.type == DescValueType.STRINGTYPE) return this.desc.getString(this.keyIndex);
+    if (this.type == DescValueType.UNITDOUBLE) return new DescriptorUnitDouble(this.getUnitDoubleType(this.keyIndex), this.getUnitDoubleValue(this.keyIndex));
+    return null;
+};
