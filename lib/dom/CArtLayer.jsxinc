@@ -3,8 +3,8 @@
 
 
 var CArtLayer = function (dom) {
-    this.dom = dom;
-}
+    base(this, dom);
+};
 inherits(CArtLayer, CLayer);
 ObjectAssign(CArtLayer.prototype, LayerGroupMixin.prototype);
 

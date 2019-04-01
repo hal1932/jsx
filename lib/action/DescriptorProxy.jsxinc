@@ -1,4 +1,4 @@
-﻿#include "_utils.jsxinc"
+﻿#include "../utils/scopes.jsxinc"
 #include "DescriptorProperty.jsxinc"
 
 var DescriptorProxy = function (desc) {

@@ -6,8 +6,8 @@
 
 
 var CLayerSet = function (dom) {
-    this.dom = dom;
-}
+    base(this, dom);
+};
 inherits(CLayerSet, CLayer);
 ObjectAssign(CLayerSet.prototype, LayerGroupMixin.prototype);
 

@@ -1,0 +1,34 @@
+﻿#include "../common.jsxinc"
+#include "../utils/scopes.jsxinc"
+#include "DescriptorProxy.jsxinc"
+
+
+LayerDescriptorProxy = function (layer) {
+    desc = scopes.setCurrent(layer, function (_) {
+        var ref = new ActionReference();
+        ref.putEnumerated(charIDToTypeID("Lyr "), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+        return executeActionGet(ref);
+    });
+    base(this, desc);
+
+    this.layer = layer;
+};
+inherits(LayerDescriptorProxy, DescriptorProxy);
+
+
+LayerDescriptorProxy.prototype.createSmartObjectDesc = function () {
+    return _createDesc(this.desc, "smartObject");
+};
+
+LayerDescriptorProxy.prototype.createStylesDesc = function () {
+    return _createDesc(this.desc, "layerEffects");
+};
+
+// LayerDescriptor.prototype.removeStyles = function () {
+//     executeAction(stringIDToTypeID('disableLayerStyle'), this.desc.desc, DialogModes.NO);
+// };
+
+
+function _createDesc(desc, key) {
+    return desc.hasKey(key) ? new DescriptorProxy(desc.getObjectValue(key)) : null;
+};

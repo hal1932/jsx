@@ -1,18 +1,28 @@
-﻿inherits = function (derivedCtor, baseCtor) {
-	var tmpCtor = function () {};
-	tmpCtor.prototype = baseCtor.prototype;
-	derivedCtor.prototype = new tmpCtor();
-	derivedCtor.prototype.constructor = derivedCtor;
+﻿var inherits = function (derivedCtor, baseCtor) {
+    var tmpCtor = function () {};
+    tmpCtor.prototype = baseCtor.prototype;
+    derivedCtor.baseClass = baseCtor.prototype;
+    derivedCtor.prototype = new tmpCtor();
+    derivedCtor.prototype.constructor = derivedCtor;
 };
 
-isUndefined = function (obj) {
+var base = function (/* self, ...args */) {
+    var self = arguments[0];
+    var args = new Array(arguments.length - 1)
+    for (var i = 1; i < arguments.length; ++i) {
+		args[i - 1] = arguments[i];
+    }
+    self.baseClass.constructor.apply(self, args);
+};
+
+var isUndefined = function (obj) {
     return obj === undefined;
-}
+};
 
 // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 // Object.prototypeは変更できない
 //Object.prorotype.assign = function (/* target, ...sources */) {
-ObjectAssign = function (/* target, ...sources */) {
+var ObjectAssign = function (/* target, ...sources */) {
     if (arguments.length < 2) {
         return;
     }

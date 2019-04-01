@@ -21,10 +21,10 @@ console.log = function (/* ... */) {
 };
 
 console.format = function (obj) {
-	if (obj == null) {
+	if (obj === null) {
 		return "(null)";
 	}
-	if (obj == undefined) {
+	if (obj === undefined) {
 		return "(undefined)";
 	}
 
