@@ -28,15 +28,72 @@ DescriptorProxy.prototype.getUnitDoubleValue = function (key) { return this.desc
 DescriptorProxy.prototype.properties = function () {
     var props = {};
     for (var i = 0; i < this.desc.count; ++i) {
-        var keyIndex = this.desc.getKey(i);
-        var type = this.desc.getType(keyIndex);
+        var prop = this.property(i);
 
-        var key = _utils.id2char(keyIndex);
+        var key = _utils.id2char(prop.keyIndex);
         key = key[0].toLowerCase() + key.substr(1);
-
-        props[key] = new DescriptorProperty(this.desc, keyIndex, type);
+        
+        props[key] = prop;
     }
     return props;
+};
+
+DescriptorProxy.prototype.property = function (indexOrPath) {
+    if (typeof indexOrPath == "number") {
+        var i = indexOrPath;
+        
+        var keyIndex = this.desc.getKey(i);
+        var type = this.desc.getType(keyIndex);
+        return new DescriptorProperty(this.desc, keyIndex, type);
+    }
+
+    function getByKeyIndex (proxy, keyIndex) {
+        for (var i = 0; i < proxy.desc.count; ++i) {
+            if (proxy.desc.getKey(i) == keyIndex) {
+                return proxy.property(i);
+            }
+        }
+        return null;
+    }
+
+    var paths = indexOrPath.split('/');
+    
+    var keyIndex = stringIDToTypeID(paths[0]);
+    var current = getByKeyIndex(this, keyIndex);
+
+    for (var i = 1; i < paths.length; ++i) {
+        if (current == null) {
+            return null;
+        }
+
+        var key = paths[i];
+
+        var value = current.get().value;
+        if (value === undefined) {
+            return null;
+        }
+
+        if (value instanceof ActionReference) {
+            value = executeActionGet(value);
+        }
+
+        if (value instanceof ActionDescriptor) {
+            var proxy = new DescriptorProxy(value);
+            keyIndex = stringIDToTypeID(key);
+            current = getByKeyIndex(proxy, keyIndex);
+        } else if (value instanceof ActionList) {
+            var index = parseInt(key);
+            if (isNaN(index)) {
+                return null;
+            }
+            var type = value.getType(index);
+            current = new DescriptorProperty(value, index, type);
+        } else {
+            return null;
+        }
+    }
+
+    return current;
 };
 
 DescriptorProxy.prototype.serialize = function (selector) {
@@ -80,7 +137,6 @@ DescriptorProxy.prototype.serialize = function (selector) {
             var children = [];
             for (var i = 0; i < value.count; ++i) {
                 var type = value.getType(i);
-
                 var child = new DescriptorProperty(value, i, type);
                 stack.push({"key": i, "value": child.get(), "parent": children});
             }

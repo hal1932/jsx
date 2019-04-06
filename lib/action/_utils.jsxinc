@@ -14,16 +14,16 @@ _utils.id2char = function (id, map) {
     $.level = 0;
     try {
     if (!v) {
-        try { v = PSConstants.reverseNameLookup(id, map); } catch (e) {}
-    }
-    if (!v) {
-        try { v = PSConstants.reverseSymLookup(id); } catch (e) {}
+        try { v = app.typeIDToStringID(id); } catch (e) {}
     }
     if (!v) {
         try { v = app.typeIDToCharID(id); } catch (e) {}
     }
     if (!v) {
-        try { v = app.typeIDToStringID(id); } catch (e) {}
+        try { v = PSConstants.reverseNameLookup(id, map); } catch (e) {}
+    }
+    if (!v) {
+        try { v = PSConstants.reverseSymLookup(id); } catch (e) {}
     }
     } catch (e) {
     }

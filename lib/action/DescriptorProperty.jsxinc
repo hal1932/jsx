@@ -13,6 +13,10 @@ var DescriptorClass = function (index) {
     this.value = _utils.id2char(index);
 };
 
+var DescriptorReference = function (reference) {
+    this.value = reference;
+};
+
 var DescriptorEnumValue = function (typeIndex, valueIndex) {
     this.typeIndex = typeIndex;
 	this.value = _utils.id2char(valueIndex);
@@ -44,7 +48,7 @@ DescriptorProperty.prototype.get = function () {
     if (this.type == DescValueType.LISTTYPE) return new DescriptorList(this.desc.getList(this.keyIndex));
     if (this.type == DescValueType.OBJECTTYPE) return new DescriptorObject(this.desc.getObjectType(this.keyIndex), this.desc.getObjectValue(this.keyIndex));
     if (this.type == DescValueType.RAWTYPE) return this.desc.getData(this.keyIndex);
-    if (this.type == DescValueType.REFERENCETYPE) return this.desc.getReference(this.keyIndex);
+    if (this.type == DescValueType.REFERENCETYPE) return new DescriptorReference(this.desc.getReference(this.keyIndex));
     if (this.type == DescValueType.STRINGTYPE) return this.desc.getString(this.keyIndex);
     if (this.type == DescValueType.UNITDOUBLE) return new DescriptorUnitDouble(this.desc.getUnitDoubleType(this.keyIndex), this.desc.getUnitDoubleValue(this.keyIndex));
     return null;
