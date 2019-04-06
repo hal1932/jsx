@@ -1,4 +1,4 @@
-#include "common.jsxinc"
+﻿#include "common.jsxinc"
 #include "CDocument.jsxinc"
 #include "CLayer.jsxinc"
 #include "CArtLayer.jsxinc"
@@ -6,4 +6,3 @@
 #include "DomObject.jsxinc"
 #include "LayerUtils.jsxinc"
 #include "LockState.jsxinc"
-#include "SmartObjectInfo.jsxinc"

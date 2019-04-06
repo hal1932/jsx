@@ -8,7 +8,7 @@
 
 
 var CDocument = function (dom) {
-    base(this, dom);
+    base(CDocument, this, dom);
 };
 inherits(CDocument, DomObject);
 ObjectAssign(CDocument.prototype, LayerGroupMixin.prototype);

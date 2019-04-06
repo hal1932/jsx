@@ -18,6 +18,12 @@ Array.prototype.filter = function (predicate) {
     return result;
 };
 
+Array.prototype.extend = function (items) {
+    for (var i = 0; i < items.length; ++i) {
+        this.push(items[i]);
+    }
+};
+
 // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
 Array.prototype.includes = function (searchElement, fromIndex) {
     return this.indexOf(searchElement, fromIndex) >= 0;

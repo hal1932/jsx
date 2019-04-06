@@ -5,7 +5,7 @@
 
 
 var CLayer = function (dom) { 
-    base(this, dom);
+    base(CLayer, this, dom);
 };
 inherits(CLayer, DomObject);
 

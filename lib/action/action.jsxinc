@@ -1,2 +1,3 @@
 #include "DescriptorProxy.jsxinc"
 #include "DescriptorProperty.jsxinc"
+#include "LayerDescriptorProxy.jsxinc"

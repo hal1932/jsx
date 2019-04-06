@@ -23,6 +23,10 @@ var DescriptorObject = function (typeIndex, valueDesc) {
     this.value = valueDesc;
 };
 
+var DescriptorList = function (value) {
+    this.value = value;
+};
+
 var DescriptorUnitDouble = function (typeIndex, value) {
     this.typeIndex = typeIndex;
     this.value = value;
@@ -37,10 +41,10 @@ DescriptorProperty.prototype.get = function () {
     if (this.type == DescValueType.ENUMERATEDTYPE) return new DescriptorEnumValue(this.desc.getEnumerationType(this.keyIndex), this.desc.getEnumerationValue(this.keyIndex))
     if (this.type == DescValueType.INTEGERTYPE) return this.desc.getInteger(this.keyIndex);
     // if (this.type == DescValueType.LARGEINTEGERTYPE) return this.desc.getLargeInteger(this.keyIndex);
-    if (this.type == DescValueType.LISTTYPE) return this.desc.getList(this.keyIndex);
+    if (this.type == DescValueType.LISTTYPE) return new DescriptorList(this.desc.getList(this.keyIndex));
     if (this.type == DescValueType.OBJECTTYPE) return new DescriptorObject(this.desc.getObjectType(this.keyIndex), this.desc.getObjectValue(this.keyIndex));
     if (this.type == DescValueType.RAWTYPE) return this.desc.getData(this.keyIndex);
-    if (this.type == DescValueType.REFERENCETYPE) return this.desc.getReferene(this.keyIndex);
+    if (this.type == DescValueType.REFERENCETYPE) return this.desc.getReference(this.keyIndex);
     if (this.type == DescValueType.STRINGTYPE) return this.desc.getString(this.keyIndex);
     if (this.type == DescValueType.UNITDOUBLE) return new DescriptorUnitDouble(this.desc.getUnitDoubleType(this.keyIndex), this.desc.getUnitDoubleValue(this.keyIndex));
     return null;

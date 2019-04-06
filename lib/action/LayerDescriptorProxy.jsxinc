@@ -9,7 +9,7 @@ LayerDescriptorProxy = function (layer) {
         ref.putEnumerated(charIDToTypeID("Lyr "), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
         return executeActionGet(ref);
     });
-    base(this, desc);
+    base(LayerDescriptorProxy, this, desc);
 
     this.layer = layer;
 };

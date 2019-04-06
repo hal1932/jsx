@@ -1,4 +1,5 @@
 ﻿#include "../utils/scopes.jsxinc"
+#include "../extensions/Array.jsxinc"
 #include "DescriptorProperty.jsxinc"
 
 var DescriptorProxy = function (desc) {
@@ -35,5 +36,59 @@ DescriptorProxy.prototype.properties = function () {
 
         props[key] = new DescriptorProperty(this.desc, keyIndex, type);
     }
+    return props;
+};
+
+DescriptorProxy.prototype.serialize = function (selector) {
+    selector = selector == undefined ? selector = function (key, value) { return value; } : selector;
+
+    var props = {};
+
+    var stack = [];
+    var tmpProps = this.properties();
+    for (var key in tmpProps) {
+        stack.push({"key": key, "value": tmpProps[key].get(), "parent": props});
+    }
+
+    while (stack.length > 0) {
+        var item = stack.pop();
+
+        var key = item.key;
+        var parent = item.parent;
+
+        var value = item.value;
+        if (value.hasOwnProperty('value')) {
+            value = value.value;
+        }
+
+        value = selector(key, value);
+ 
+        if (value instanceof ActionReference) {
+            value = executeActionGet(value);
+        }
+
+        if (value instanceof ActionDescriptor) {
+            var desc = new DescriptorProxy(value);
+            var childProps = desc.properties();
+
+            var children = {};
+            for (var childKey in childProps) {
+                stack.push({"key": childKey, "value": childProps[childKey].get(), "parent": children});
+            }
+            parent[key] = children;
+        } else if (value instanceof ActionList) {
+            var children = [];
+            for (var i = 0; i < value.count; ++i) {
+                var type = value.getType(i);
+
+                var child = new DescriptorProperty(value, i, type);
+                stack.push({"key": i, "value": child.get(), "parent": children});
+            }
+            parent[key] = children;
+        } else {
+            parent[key] = value;
+        }
+    }
+
     return props;
 };

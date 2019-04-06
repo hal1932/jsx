@@ -6,13 +6,14 @@
     derivedCtor.prototype.constructor = derivedCtor;
 };
 
-var base = function (/* self, ...args */) {
-    var self = arguments[0];
-    var args = new Array(arguments.length - 1)
-    for (var i = 1; i < arguments.length; ++i) {
-		args[i - 1] = arguments[i];
+var base = function (/* cls, instalce, ...args */) {
+	var cls = arguments[0];
+    var instalce = arguments[1];
+    var args = new Array(arguments.length - 2)
+    for (var i = 2; i < arguments.length; ++i) {
+		args[i - 2] = arguments[i];
     }
-    self.baseClass.constructor.apply(self, args);
+    cls.baseClass.constructor.apply(instalce, args);
 };
 
 var isUndefined = function (obj) {
