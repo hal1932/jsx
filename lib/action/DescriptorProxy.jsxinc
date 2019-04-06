@@ -23,7 +23,7 @@ DescriptorProxy.prototype.getData = function (key) { return this.desc.getData(st
 DescriptorProxy.prototype.getReferene = function (key) { return this.desc.getReferene(stringIDToTypeID(key)); };
 DescriptorProxy.prototype.getString = function (key) { return this.desc.getString(stringIDToTypeID(key)); };
 DescriptorProxy.prototype.getUnitDoubleType = function (key) { return this.desc.getUnitDoubleType(stringIDToTypeID(key)); };
-DescriptorProxy.prototype.getUnitDoubleType = function (key) { return this.desc.getUnitDoubleType(stringIDToTypeID(key)); };
+DescriptorProxy.prototype.getUnitDoubleValue = function (key) { return this.desc.getUnitDoubleValue(stringIDToTypeID(key)); };
 
 DescriptorProxy.prototype.properties = function () {
     var props = {};
